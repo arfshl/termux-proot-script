@@ -28,7 +28,7 @@ case "$ARCH" in
         ;;
 esac
 
-mkdir -p /data/data/com.termux/files/home/pd-21/ubuntu-lts-lxqt/ubuntu
+mkdir -p /data/data/com.termux/files/home/pd-21/ubuntu-lts-lxqt/ubuntu-lts
 cd /data/data/com.termux/files/home/pd-21/ubuntu-lts-lxqt
 curl -L https://github.com/arfshl/pd-21/releases/download/ubuntu-lts/ubuntu-lts-$ARCH.tar.xz --output ubuntu-lts.tar.xz
 proot --link2symlink tar -xJpf ubuntu-lts.tar.xz -C ubuntu-lts
