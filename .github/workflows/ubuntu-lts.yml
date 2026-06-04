@@ -1,9 +1,6 @@
 name: "Ubuntu"
 
 on:
-  schedule:
-# Build Every Week
-    - cron: "0 0 * * 0"
   push:
     branches: [ 'main' ]
     paths:

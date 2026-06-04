@@ -5,7 +5,7 @@
 
 
 #### Install
-    apt update && apt install wget -y && wget https://raw.githubusercontent.com/arfshl/pd-21/refs/heads/main/ubuntu-lts/cli.sh && sh cli.sh
+    apt update && apt install wget -y && wget https://raw.githubusercontent.com/arfshl/pd-21/refs/heads/main/ubuntu-lts/cli.sh && sh cli.sh && rm ~/cli.sh
 
 ## XFCE
 - distro aliases: ubuntu-lts-xfce
@@ -16,7 +16,7 @@
 
 
 #### Install
-    apt update && apt install wget -y && wget https://raw.githubusercontent.com/arfshl/pd-21/refs/heads/main/ubuntu-lts/xfce.sh && sh xfce.sh
+    apt update && apt install wget -y && wget https://raw.githubusercontent.com/arfshl/pd-21/refs/heads/main/ubuntu-lts/xfce.sh && sh xfce.sh && rm ~/xfce.sh
 
 #### Install Web Browser, Media Player, Utility (Execute on rootfs)
     sudo apt update && sudo apt install firefox vlc thunderbird atril ristretto galculator libheif1 xarchiver webp-pixbuf-loader fonts-liberation p7zip mousepad && apt clean
@@ -30,7 +30,7 @@
 
 
 #### Install
-    apt update && apt install wget -y && wget https://raw.githubusercontent.com/arfshl/pd-21/refs/heads/main/ubuntu-lts/lxqt.sh && sh lxqt.sh
+    apt update && apt install wget -y && wget https://raw.githubusercontent.com/arfshl/pd-21/refs/heads/main/ubuntu-lts/lxqt.sh && sh lxqt.sh && rm ~/lxqt.sh
 
 #### Install Web Browser, Media Player, Utility (Execute on rootfs)
     sudo apt update && sudo apt install firefox vlc thunderbird lximage-qt kcalc lxqt-archiver qpdfview libheif1 webp-pixbuf-loader fonts-liberation p7zip featherpad && apt clean
@@ -44,7 +44,7 @@
 
 
 #### Install
-    apt update && apt install wget -y && wget https://raw.githubusercontent.com/arfshl/pd-21/refs/heads/main/ubuntu-lts/mate/bootstrap.sh && sh bootstrap.sh
+    apt update && apt install wget -y && wget https://raw.githubusercontent.com/arfshl/pd-21/refs/heads/main/ubuntu-lts/mate.sh && sh mate.sh && rm ~/mate.sh
 
 #### Install Web Browser, Media Player, Utility (Execute on rootfs)
     sudo apt update && sudo apt install firefox vlc thunderbird engrampa atril eom mate-calc pluma libheif1 webp-pixbuf-loader fonts-liberation p7zip && apt clean
@@ -59,7 +59,7 @@
 
 
 #### Install
-    apt update && apt install wget -y && wget https://raw.githubusercontent.com/arfshl/pd-21/refs/heads/main/ubuntu-lts/lxde.sh && sh lxde.sh
+    apt update && apt install wget -y && wget https://raw.githubusercontent.com/arfshl/pd-21/refs/heads/main/ubuntu-lts/lxde.sh && sh lxde.sh && rm ~/lxde.sh
 
 #### Install Web Browser, Media Player, Utility (Execute on rootfs)
     sudo apt update && sudo apt install firefox vlc thunderbird xarchiver atril mousepad galculator gpicview libheif1 webp-pixbuf-loader fonts-liberation p7zip && apt clean
