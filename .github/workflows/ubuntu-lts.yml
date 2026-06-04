@@ -42,28 +42,6 @@ jobs:
               # Pull and Export image
               docker pull "ubuntu:noble@${digest}"
               docker export $(docker create "ubuntu:noble@${digest}") | xz -T 0 > "$GITHUB_WORKSPACE/ubuntu-lts-${{ matrix.arch }}.tar.xz"
-              mkdir dump
-              sudo tar -xJpf ubuntu-lts-${{ matrix.arch }}.tar.xz -C dump
-              sudo rm ubuntu-lts-${{ matrix.arch }}.tar.xz
-              
-              cat <<- EOF | sudo unshare -mpf bash -e -
-              rm -f "./dump/etc/resolv.conf"
-              echo "nameserver 1.1.1.1" > "./dump/etc/resolv.conf"
-              mount --bind /dev "./dump/dev"
-              mount --bind /proc "./dump/proc"
-              mount --bind /sys "./dump/sys"
-              chroot "./dump" apt update
-              chroot "./dump" apt purge -yq --allow-remove-essential coreutils-from-uutils
-              chroot "./dump" apt purge -yq --allow-remove-essential rust-coreutils
-              chroot "./dump" apt install -yq gnu-coreutils
-              chroot "./dump" apt install -yq coreutils-from-gnu
-              chroot "./dump" apt clean
-              sudo rm -rf ./dump/var/lib/apt/lists/*
-              EOF
-              
-              cd $GITHUB_WORKSPACE/dump
-              sudo tar --exclude=dev/* -cpf - * | xz -9 -T0 -c > $GITHUB_WORKSPACE/ubuntu-lts-${{ matrix.arch }}.tar.xz
-              sudo rm -r $GITHUB_WORKSPACE/dump
               
       - name: Push to release
         uses: softprops/action-gh-release@v3
@@ -107,29 +85,6 @@ jobs:
               # Pull and Export image
               docker pull "ubuntu:noble@${digest}"
               docker export $(docker create "ubuntu:noble@${digest}") | xz -T 0 > "$GITHUB_WORKSPACE/ubuntu-lts-${{ matrix.arch }}.tar.xz"
-              mkdir dump
-              sudo tar -xJpf ubuntu-lts-${{ matrix.arch }}.tar.xz -C dump
-              sudo rm ubuntu-lts-${{ matrix.arch }}.tar.xz
-              
-              cat <<- EOF | sudo unshare -mpf bash -e -
-              rm -f "./dump/etc/resolv.conf"
-              echo "nameserver 1.1.1.1" > "./dump/etc/resolv.conf"
-              mount --bind /dev "./dump/dev"
-              mount --bind /proc "./dump/proc"
-              mount --bind /sys "./dump/sys"
-              chroot "./dump" apt update
-              chroot "./dump" apt purge -yq --allow-remove-essential coreutils-from-uutils
-              chroot "./dump" apt purge -yq --allow-remove-essential rust-coreutils
-              chroot "./dump" apt install -yq gnu-coreutils
-              chroot "./dump" apt install -yq coreutils-from-gnu
-              chroot "./dump" apt clean
-              sudo rm -rf ./dump/var/lib/apt/lists/*
-              EOF
-              
-              cd $GITHUB_WORKSPACE/dump
-              sudo tar --exclude=dev/* -cpf - * | xz -9 -T0 -c > $GITHUB_WORKSPACE/ubuntu-lts-${{ matrix.arch }}.tar.xz
-              sudo rm -r $GITHUB_WORKSPACE/dump
-              
       - name: Push to release
         uses: softprops/action-gh-release@v3
         with:
@@ -160,29 +115,6 @@ jobs:
               # Pull and Export image
               docker pull "ubuntu:noble@${digest}"
               docker export $(docker create "ubuntu:noble@${digest}") | xz -T 0 > "$GITHUB_WORKSPACE/ubuntu-lts-${{ matrix.arch }}.tar.xz"
-              mkdir dump
-              sudo tar -xJpf ubuntu-lts-${{ matrix.arch }}.tar.xz -C dump
-              sudo rm ubuntu-lts-${{ matrix.arch }}.tar.xz
-              
-              cat <<- EOF | sudo unshare -mpf bash -e -
-              rm -f "./dump/etc/resolv.conf"
-              echo "nameserver 1.1.1.1" > "./dump/etc/resolv.conf"
-              mount --bind /dev "./dump/dev"
-              mount --bind /proc "./dump/proc"
-              mount --bind /sys "./dump/sys"
-              chroot "./dump" apt update
-              chroot "./dump" apt purge -yq --allow-remove-essential coreutils-from-uutils
-              chroot "./dump" apt purge -yq --allow-remove-essential rust-coreutils
-              chroot "./dump" apt install -yq gnu-coreutils
-              chroot "./dump" apt install -yq coreutils-from-gnu
-              chroot "./dump" apt clean
-              sudo rm -rf ./dump/var/lib/apt/lists/*
-              EOF
-              
-              cd $GITHUB_WORKSPACE/dump
-              sudo tar --exclude=dev/* -cpf - * | xz -9 -T0 -c > $GITHUB_WORKSPACE/ubuntu-lts-${{ matrix.arch }}.tar.xz
-              sudo rm -r $GITHUB_WORKSPACE/dump
-              
       - name: Push to release
         uses: softprops/action-gh-release@v3
         with:
