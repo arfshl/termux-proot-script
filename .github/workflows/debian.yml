@@ -40,13 +40,13 @@ jobs:
               ;;
               esac
               # Fetch image manifest
-              manifest=$(docker manifest inspect debian:bookworm)
+              manifest=$(docker manifest inspect debian:bullseye)
               # Fetch image digest
               arch="$ARCH"
               digest=$(echo "$manifest" | jq -r ".manifests[] | select(.platform.architecture == \"$arch\") | .digest")
               # Pull and Export image
-              docker pull "debian:bookworm@${digest}"
-              docker export $(docker create "debian:bookworm@${digest}") | xz -T 0 > "$GITHUB_WORKSPACE/debian-${{ matrix.arch }}.tar.xz"
+              docker pull "debian:bullseye@${digest}"
+              docker export $(docker create "debian:bullseye@${digest}") | xz -T 0 > "$GITHUB_WORKSPACE/debian-${{ matrix.arch }}.tar.xz"
 
       - name: Push to release
         uses: softprops/action-gh-release@v3
@@ -83,13 +83,13 @@ jobs:
               ;;
               esac
               # Fetch image manifest
-              manifest=$(docker manifest inspect debian:bookworm)
+              manifest=$(docker manifest inspect debian:bullseye)
               # Fetch image digest
               arch="$ARCH"
               digest=$(echo "$manifest" | jq -r ".manifests[] | select(.platform.architecture == \"$arch\") | select(.platform.variant == \"v7\") | .digest")
               # Pull and Export image
-              docker pull "debian:bookworm@${digest}"
-              docker export $(docker create "debian:bookworm@${digest}") | xz -T 0 > "$GITHUB_WORKSPACE/debian-${{ matrix.arch }}.tar.xz"
+              docker pull "debian:bullseye@${digest}"
+              docker export $(docker create "debian:bullseye@${digest}") | xz -T 0 > "$GITHUB_WORKSPACE/debian-${{ matrix.arch }}.tar.xz"
 
       - name: Push to release
         uses: softprops/action-gh-release@v3
