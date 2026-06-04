@@ -31,7 +31,7 @@ esac
 mkdir -p /data/data/com.termux/files/home/pd-21/ubuntu-lts-xfce/ubuntu
 cd /data/data/com.termux/files/home/pd-21/ubuntu-lts-xfce
 curl -L https://github.com/arfshl/pd-21/releases/download/ubuntu-lts/ubuntu-lts-$ARCH.tar.xz --output ubuntu-lts.tar.xz
-proot --link2symlink tar -xJpf ubuntu-lts.tar.xz -C ubuntu
+proot --link2symlink tar -xJpf ubuntu-lts.tar.xz -C ubuntu-lts
 rm ubuntu-lts.tar.xz
 mkdir -p /data/data/com.termux/files/home/pd-21/ubuntu-lts-xfce/binds
 mkdir -p /data/data/com.termux/files/home/pd-21/ubuntu-lts-xfce/ubuntu-lts/proc/fakethings
