@@ -11,21 +11,21 @@ Supported Desktop Environment:
 
 | Distribution     | Flavor/Desktop Environment | Supported CPU Arch | Docker Registry |
 |------------------|----------------------------|----------------|-----------------|
-| [Debian Stable](https://github.com/arfshl/pd-andronix/tree/main/debian) (Recommended for beginners) | CLI XFCE LXQt MATE LXDE | `arm` `aarch64` `x86_64` | `debian:stable` |
-| [Ubuntu LTS](https://github.com/arfshl/pd-andronix/tree/main/ubuntu-lts) (Recommended for beginners) | CLI XFCE LXQt MATE LXDE | `arm` `aarch64` `x86_64` | `ubuntu:latest` |
+| [Debian Stable](https://github.com/arfshl/pd-21/tree/main/debian) (Recommended for beginners) | CLI XFCE LXQt MATE LXDE | `arm` `aarch64` `x86_64` | `debian:stable` |
+| [Ubuntu LTS](https://github.com/arfshl/pd-21/tree/main/ubuntu-lts) (Recommended for beginners) | CLI XFCE LXQt MATE LXDE | `arm` `aarch64` `x86_64` | `ubuntu:latest` |
 
 ## Uninstalling
 ```
 - Rootfs-only uninstall
 #!/bin/sh
-cd ~/pd-andronix && chmod -R 777 [distro aliases] && rm -rf [distro aliases]
+cd ~/pd-21 && chmod -R 777 [distro aliases] && rm -rf [distro aliases]
 
 rm -f /data/data/com.termux/files/usr/bin/[distro aliases]
 
 
 - Full Uninstall, including in-termux dependency
 #!/bin/sh
-cd ~/pd-andronix && chmod -R 777 [distro aliases] && rm -rf [distro aliases]
+cd ~/pd-21 && chmod -R 777 [distro aliases] && rm -rf [distro aliases]
 
 rm -f /data/data/com.termux/files/usr/bin/[distro aliases]
 
