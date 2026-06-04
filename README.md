@@ -18,8 +18,8 @@ termux21 scientific and games repo GPG signature is expired and will interfere w
 
 | Distribution     | Flavor/Desktop Environment | Supported CPU Arch | Docker Registry |
 |------------------|----------------------------|----------------|-----------------|
-| [Debian 11 Bullseye](https://github.com/arfshl/pd-21/tree/main/debian) (Recommended for beginners) | CLI XFCE LXQt MATE LXDE | `arm` `aarch64` `x86_64` | `debian:stable` |
-| [Ubuntu 20.04 LTS Focal Fossa](https://github.com/arfshl/pd-21/tree/main/ubuntu-lts) (Recommended for beginners) | CLI XFCE LXQt MATE LXDE | `arm` `aarch64` `x86_64` | `ubuntu:latest` |
+| [Debian 11 Bullseye](https://github.com/arfshl/pd-21/tree/main/debian) (Recommended for beginners) | CLI XFCE LXQt MATE LXDE | `arm` `aarch64` `x86_64` | `debian:bullseye` |
+| [Ubuntu 20.04 LTS Focal Fossa](https://github.com/arfshl/pd-21/tree/main/ubuntu-lts) (Recommended for beginners) | CLI XFCE LXQt MATE LXDE | `arm` `aarch64` `x86_64` | `ubuntu:focal` |
 
 ## Uninstalling
 ```
