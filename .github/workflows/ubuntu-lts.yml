@@ -1,0 +1,193 @@
+name: "Ubuntu"
+
+on:
+  schedule:
+# Build Every Week
+    - cron: "0 0 * * 0"
+  push:
+    branches: [ 'main' ]
+    paths:
+      - ".github/workflows/ubuntu-lts.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write  
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        arch: [x86_64]
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Start Build!
+        run: |
+              ARCH=${{ matrix.arch }}
+              case "$ARCH" in
+              x86_64) ARCH=amd64 ;;
+              *)
+              echo "Unsupported architecture: $ARCH"
+              exit 1
+              ;;
+              esac
+              # Fetch image manifest
+              manifest=$(docker manifest inspect ubuntu:latest)
+              # Fetch image digest
+              arch="$ARCH"
+              digest=$(echo "$manifest" | jq -r ".manifests[] | select(.platform.architecture == \"$arch\") | .digest")
+              # Pull and Export image
+              docker pull "ubuntu:latest@${digest}"
+              docker export $(docker create "ubuntu:latest@${digest}") | xz -T 0 > "$GITHUB_WORKSPACE/ubuntu-lts-${{ matrix.arch }}.tar.xz"
+              mkdir dump
+              sudo tar -xJpf ubuntu-lts-${{ matrix.arch }}.tar.xz -C dump
+              sudo rm ubuntu-lts-${{ matrix.arch }}.tar.xz
+              
+              cat <<- EOF | sudo unshare -mpf bash -e -
+              rm -f "./dump/etc/resolv.conf"
+              echo "nameserver 1.1.1.1" > "./dump/etc/resolv.conf"
+              mount --bind /dev "./dump/dev"
+              mount --bind /proc "./dump/proc"
+              mount --bind /sys "./dump/sys"
+              chroot "./dump" apt update
+              chroot "./dump" apt purge -yq --allow-remove-essential coreutils-from-uutils
+              chroot "./dump" apt purge -yq --allow-remove-essential rust-coreutils
+              chroot "./dump" apt install -yq gnu-coreutils
+              chroot "./dump" apt install -yq coreutils-from-gnu
+              chroot "./dump" apt clean
+              sudo rm -rf ./dump/var/lib/apt/lists/*
+              EOF
+              
+              cd $GITHUB_WORKSPACE/dump
+              sudo tar --exclude=dev/* -cpf - * | xz -9 -T0 -c > $GITHUB_WORKSPACE/ubuntu-lts-${{ matrix.arch }}.tar.xz
+              sudo rm -r $GITHUB_WORKSPACE/dump
+              
+      - name: Push to release
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: ubuntu-lts
+          name: Ubuntu LTS
+          files: |
+            ubuntu-*.tar.xz
+          preserve_order: true
+
+  build-arm64:
+    runs-on: ubuntu-24.04-arm
+    strategy:
+      matrix:
+        arch: [aarch64]
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Start Build!
+        run: |
+              ARCH=${{ matrix.arch }}
+              case "$ARCH" in
+              x86_64) ARCH=amd64 ;;
+              amd64) ARCH=amd64 ;;
+              aarch64) ARCH=arm64 ;;
+              arm64) ARCH=arm64 ;;
+              arm) ARCH=arm ;;
+              i386) ARCH=386 ;;
+              *)
+              echo "Unsupported architecture: $ARCH"
+              exit 1
+              ;;
+              esac
+              # Fetch image manifest
+              manifest=$(docker manifest inspect ubuntu:latest)
+              # Fetch image digest
+              arch="$ARCH"
+              digest=$(echo "$manifest" | jq -r ".manifests[] | select(.platform.architecture == \"$arch\") | .digest")
+              # Pull and Export image
+              docker pull "ubuntu:latest@${digest}"
+              docker export $(docker create "ubuntu:latest@${digest}") | xz -T 0 > "$GITHUB_WORKSPACE/ubuntu-lts-${{ matrix.arch }}.tar.xz"
+              mkdir dump
+              sudo tar -xJpf ubuntu-lts-${{ matrix.arch }}.tar.xz -C dump
+              sudo rm ubuntu-lts-${{ matrix.arch }}.tar.xz
+              
+              cat <<- EOF | sudo unshare -mpf bash -e -
+              rm -f "./dump/etc/resolv.conf"
+              echo "nameserver 1.1.1.1" > "./dump/etc/resolv.conf"
+              mount --bind /dev "./dump/dev"
+              mount --bind /proc "./dump/proc"
+              mount --bind /sys "./dump/sys"
+              chroot "./dump" apt update
+              chroot "./dump" apt purge -yq --allow-remove-essential coreutils-from-uutils
+              chroot "./dump" apt purge -yq --allow-remove-essential rust-coreutils
+              chroot "./dump" apt install -yq gnu-coreutils
+              chroot "./dump" apt install -yq coreutils-from-gnu
+              chroot "./dump" apt clean
+              sudo rm -rf ./dump/var/lib/apt/lists/*
+              EOF
+              
+              cd $GITHUB_WORKSPACE/dump
+              sudo tar --exclude=dev/* -cpf - * | xz -9 -T0 -c > $GITHUB_WORKSPACE/ubuntu-lts-${{ matrix.arch }}.tar.xz
+              sudo rm -r $GITHUB_WORKSPACE/dump
+              
+      - name: Push to release
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: ubuntu-lts
+          name: Ubuntu LTS
+          files: |
+            ubuntu-*.tar.xz
+          preserve_order: true
+          
+  build-arm:
+    runs-on: ubuntu-24.04-arm
+    strategy:
+      matrix:
+        arch: [arm]
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Start Build!
+        run: |
+              ARCH=${{ matrix.arch }}
+              # Fetch image manifest
+              manifest=$(docker manifest inspect ubuntu:latest)
+              # Fetch image digest
+              arch="$ARCH"
+              digest=$(echo "$manifest" | jq -r ".manifests[] | select(.platform.architecture == \"$arch\") | select(.platform.variant == \"v7\") | .digest")
+              # Pull and Export image
+              docker pull "ubuntu:latest@${digest}"
+              docker export $(docker create "ubuntu:latest@${digest}") | xz -T 0 > "$GITHUB_WORKSPACE/ubuntu-lts-${{ matrix.arch }}.tar.xz"
+              mkdir dump
+              sudo tar -xJpf ubuntu-lts-${{ matrix.arch }}.tar.xz -C dump
+              sudo rm ubuntu-lts-${{ matrix.arch }}.tar.xz
+              
+              cat <<- EOF | sudo unshare -mpf bash -e -
+              rm -f "./dump/etc/resolv.conf"
+              echo "nameserver 1.1.1.1" > "./dump/etc/resolv.conf"
+              mount --bind /dev "./dump/dev"
+              mount --bind /proc "./dump/proc"
+              mount --bind /sys "./dump/sys"
+              chroot "./dump" apt update
+              chroot "./dump" apt purge -yq --allow-remove-essential coreutils-from-uutils
+              chroot "./dump" apt purge -yq --allow-remove-essential rust-coreutils
+              chroot "./dump" apt install -yq gnu-coreutils
+              chroot "./dump" apt install -yq coreutils-from-gnu
+              chroot "./dump" apt clean
+              sudo rm -rf ./dump/var/lib/apt/lists/*
+              EOF
+              
+              cd $GITHUB_WORKSPACE/dump
+              sudo tar --exclude=dev/* -cpf - * | xz -9 -T0 -c > $GITHUB_WORKSPACE/ubuntu-lts-${{ matrix.arch }}.tar.xz
+              sudo rm -r $GITHUB_WORKSPACE/dump
+              
+      - name: Push to release
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: ubuntu-lts
+          name: Ubuntu LTS
+          files: |
+            ubuntu-*.tar.xz
+          preserve_order: true
