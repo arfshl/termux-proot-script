@@ -1,23 +1,23 @@
-# Ubuntu LTS
+# Ubuntu Regular Release
 
 ## CLI
-- distro aliases: ubuntu-lts-cli
+- distro aliases: ubuntu-cli
 
 #### Install
 ```sh
-curl -fsSL https://raw.githubusercontent.com/arfshl/termux-proot-script/refs/heads/main/ubuntu-lts/cli.sh | bash
+curl -fsSL https://raw.githubusercontent.com/arfshl/termux-proot-script/refs/heads/main/ubuntu/cli.sh | bash
 ```
 
 ## XFCE
-- distro aliases: ubuntu-lts-xfce
-- Username: ubuntu-lts-xfce
+- distro aliases: ubuntu-xfce
+- Username: ubuntu-xfce
 - `sudo` Password: 123
 - VNC Server Address: 127.0.0.1:5900
 - VNC Server Password: 1234567890
 
 #### Install
 ```sh
-curl -fsSL https://raw.githubusercontent.com/arfshl/termux-proot-script/refs/heads/main/ubuntu-lts/xfce.sh | bash
+curl -fsSL https://raw.githubusercontent.com/arfshl/termux-proot-script/refs/heads/main/ubuntu/xfce.sh | bash
 ```
 
 #### Install Web Browser, Media Player, Utility (Execute on rootfs)
@@ -26,15 +26,15 @@ sudo apt update && sudo apt install firefox vlc thunderbird atril ristretto galc
 ```
 
 ## LXQt
-- distro aliases: ubuntu-lts-lxqt
-- Username: ubuntu-lts-lxqt
+- distro aliases: ubuntu-lxqt
+- Username: ubuntu-lxqt
 - `sudo` Password: 123
 - VNC Server Address: 127.0.0.1:5900
 - VNC Server Password: 1234567890
 
 #### Install
 ```sh
-curl -fsSL https://raw.githubusercontent.com/arfshl/termux-proot-script/refs/heads/main/ubuntu-lts/lxqt.sh | bash
+curl -fsSL https://raw.githubusercontent.com/arfshl/termux-proot-script/refs/heads/main/ubuntu/lxqt.sh | bash
 ```
 
 #### Install Web Browser, Media Player, Utility (Execute on rootfs)
@@ -43,15 +43,15 @@ sudo apt update && sudo apt install firefox vlc thunderbird lximage-qt kcalc lxq
 ```
 
 ## MATE
-- distro aliases: ubuntu-lts-mate
-- Username: ubuntu-lts-mate
+- distro aliases: ubuntu-mate
+- Username: ubuntu-mate
 - `sudo` Password: 123
 - VNC Server Address: 127.0.0.1:5900
 - VNC Server Password: 1234567890
 
 #### Install
 ```sh
-curl -fsSL https://raw.githubusercontent.com/arfshl/termux-proot-script/refs/heads/main/ubuntu-lts/mate.sh | bash
+curl -fsSL https://raw.githubusercontent.com/arfshl/termux-proot-script/refs/heads/main/ubuntu/mate/bootstrap.sh | bash
 ```
 
 #### Install Web Browser, Media Player, Utility (Execute on rootfs)
@@ -60,15 +60,15 @@ sudo apt update && sudo apt install firefox vlc thunderbird engrampa atril eom m
 ```
 
 ## LXDE
-- distro aliases: ubuntu-lts-lxde
-- Username: ubuntu-lts-lxde
+- distro aliases: ubuntu-lxde
+- Username: ubuntu-lxde
 - `sudo` Password: 123
 - VNC Server Address: 127.0.0.1:5900
 - VNC Server Password: 1234567890
 
 #### Install
 ```sh
-curl -fsSL https://raw.githubusercontent.com/arfshl/termux-proot-script/refs/heads/main/ubuntu-lts/lxde.sh | bash
+curl -fsSL https://raw.githubusercontent.com/arfshl/termux-proot-script/refs/heads/main/ubuntu/lxde.sh | bash
 ```
 
 #### Install Web Browser, Media Player, Utility (Execute on rootfs)
@@ -78,10 +78,10 @@ sudo apt update && sudo apt install firefox vlc thunderbird xarchiver atril mous
 
 ## Installing Chromium
 ```sh
-curl -fsSL https://raw.githubusercontent.com/arfshl/proot-distro-desktop/refs/heads/main/ubuntu/chromium-install.sh | bash
+sudo su && curl -fsSL https://raw.githubusercontent.com/arfshl/proot-distro-desktop/refs/heads/main/ubuntu/chromium-install.sh | bash
 ```
 
-## Disable apt Pager at Debian 13 or ubuntu-lts 26.04
+## Disable apt Pager at Debian 13 or Ubuntu 26.04
 ```sh
 echo 'Binary::apt::Pager "false";' | sudo tee -a /etc/apt/apt.conf.d/99nopager
 ```

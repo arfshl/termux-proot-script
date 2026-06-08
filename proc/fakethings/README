@@ -1,0 +1,9 @@
+This directory contains fake /proc entries for certain system data interfaces which known to be restricted on Android OS.
+
+All /proc entries are based on values retrieved from Kubuntu 24.04.4 LTS running on expertbook-b1402cba, intel i3-1215u, and 8 GB of memory. Date 7/6/2026.
+
+Linux version 6.17.0-35-generic (buildd@lcy02-amd64-079) (x86_64-linux-gnu-gcc-13 (Ubuntu 13.3.0-6ubuntu2~24.04.1) 13.3.0, GNU ld (GNU Binutils for Ubuntu) 2.42) #35~24.04.1-Ubuntu SMP PREEMPT_DYNAMIC Tue May 26 19:30:42 UTC 2 
+
+Kernel version will be updated if needed, and also other components but that may be very rarely.
+
+Dedicated for: 1004200828

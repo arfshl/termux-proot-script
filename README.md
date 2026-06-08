@@ -1,8 +1,4 @@
-## Forked from AndronixApp/AndronixOrigin
-
-## Support for Android 5/6 without proot-distro, based on andronixapp/andronixorigin
-
-## Only Debian 11 and Ubuntu 24.04 LTS is supported since they're last version known to be worked with Android 5/6 without critical errors
+## Lightweight implementation of proot with bash script w/o proot-distro. Fork of andronixapp/andronixorigin.
 
 ## You Need
 - [Termux App](https://github.com/termux/termux-app/releases)
@@ -11,28 +7,24 @@
 Supported Desktop Environment:
 - XFCE, MATE, LXQt, LXDE (stable and worked well)
 
-## Repo fix (important)
-termux21 scientific and games repo GPG signature is expired and will interfere with apt package manager, we recommends to remove it instead with this command:
-
-    rm $PREFIX/etc/apt/sources.list.d/*
-
 | Distribution     | Flavor/Desktop Environment | Supported CPU Arch | Docker Registry |
 |------------------|----------------------------|----------------|-----------------|
-| [Debian 11 Bullseye](https://github.com/arfshl/pd-21/tree/main/debian) (Recommended for beginners) | CLI XFCE LXQt MATE LXDE | `arm` `aarch64` `x86_64` | `debian:bullseye` |
-| [Ubuntu 20.04 LTS Focal Fossa](https://github.com/arfshl/pd-21/tree/main/ubuntu-lts) (Recommended for beginners) | CLI XFCE LXQt MATE LXDE | `arm` `aarch64` `x86_64` | `ubuntu:focal` |
+| [Debian Stable](https://github.com/arfshl/termux-proot-script/tree/main/debian) (Recommended for beginners) | CLI XFCE LXQt MATE LXDE | `arm` `aarch64` `x86_64` | `debian:stable` |
+| [Ubuntu Regular Release](https://github.com/arfshl/termux-proot-script/tree/main/ubuntu) | CLI XFCE LXQt MATE LXDE | `arm` `aarch64` `x86_64` | `ubuntu:rolling` |
+| [Ubuntu LTS](https://github.com/arfshl/termux-proot-script/tree/main/ubuntu-lts) (Recommended for beginners) | CLI XFCE LXQt MATE LXDE | `arm` `aarch64` `x86_64` | `ubuntu:latest` |
 
 ## Uninstalling
 ```
 - Rootfs-only uninstall
 #!/bin/sh
-cd ~/pd-21 && chmod -R 777 [distro aliases] && rm -rf [distro aliases]
+cd ~/termux-proot-script && chmod -R 777 [distro aliases] && rm -rf [distro aliases]
 
 rm -f /data/data/com.termux/files/usr/bin/[distro aliases]
 
 
 - Full Uninstall, including in-termux dependency
 #!/bin/sh
-cd ~/pd-21 && chmod -R 777 [distro aliases] && rm -rf [distro aliases]
+cd ~/termux-proot-script && chmod -R 777 [distro aliases] && rm -rf [distro aliases]
 
 rm -f /data/data/com.termux/files/usr/bin/[distro aliases]
 
