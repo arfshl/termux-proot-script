@@ -10,7 +10,7 @@ Supported Desktop Environment:
 
 | Distribution     | Flavor/Desktop Environment | Supported CPU Arch | Docker Registry |
 |------------------|----------------------------|----------------|-----------------|
-| [Debian Stable](https://github.com/arfshl/termux-proot-script/tree/main/debian) (Recommended for beginners) | CLI XFCE LXQt MATE LXDE | `arm` `aarch64` `x86_64` | `debian:stable` |
+| [Debian Stable](https://github.com/arfshl/termux-proot-script/tree/main/debian) (Recommended for beginners) | CLI XFCE LXQt MATE LXDE | `arm` `aarch64` `x86_64` | `debian:latest` |
 | [Ubuntu Regular Release](https://github.com/arfshl/termux-proot-script/tree/main/ubuntu) | CLI XFCE LXQt MATE LXDE | `arm` `aarch64` `x86_64` | `ubuntu:rolling` |
 | [Ubuntu LTS](https://github.com/arfshl/termux-proot-script/tree/main/ubuntu-lts) (Recommended for beginners) | CLI XFCE LXQt MATE LXDE | `arm` `aarch64` `x86_64` | `ubuntu:latest` |
 
