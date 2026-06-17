@@ -1,0 +1,214 @@
+name: "Arch Linux"
+
+on:
+  schedule:
+# Build Every Week
+    - cron: "0 1 * * 0"
+  push:
+    branches: [ 'main' ]
+    paths:
+      - ".github/workflows/archlinux.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write  
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        arch: [x86_64]
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Start Build!
+        run: |
+              ARCH=${{ matrix.arch }}
+              case "$ARCH" in
+              x86_64) ARCH=amd64 ;;
+              amd64) ARCH=amd64 ;;
+              aarch64) ARCH=arm64 ;;
+              arm64) ARCH=arm64 ;;
+              arm) ARCH=arm ;;
+              i386) ARCH=386 ;;
+              *)
+              echo "Unsupported architecture: $ARCH"
+              exit 1
+              ;;
+              esac
+              # Fetch image manifest
+              manifest=$(docker manifest inspect archlinux)
+              # Fetch image digest
+              arch="$ARCH"
+              digest=$(echo "$manifest" | jq -r ".manifests[] | select(.platform.architecture == \"$arch\") | .digest")
+              # Pull and Export image
+              docker pull "archlinux@${digest}"
+              docker export $(docker create "archlinux@${digest}") | xz -T 0 > "$GITHUB_WORKSPACE/archlinux-${{ matrix.arch }}.tar.xz"
+              mkdir dump
+              sudo tar -xJpf archlinux-${{ matrix.arch }}.tar.xz -C dump
+              sudo rm archlinux-${{ matrix.arch }}.tar.xz
+              
+              cat <<- EOF | sudo unshare -mpf bash -e -
+              rm -f "./dump/etc/resolv.conf"
+              echo "nameserver 1.1.1.1" > "./dump/etc/resolv.conf"
+              sed -i 's/^#DisableSandbox/DisableSandbox/' "./dump/etc/pacman.conf"
+              mount --bind /dev "./dump/dev"
+              mount --bind /proc "./dump/proc"
+              mount --bind /sys "./dump/sys"
+              mount --bind ./dump "./dump"
+              #chroot "./dump" useradd -r -s /usr/bin/nologin -d /var/lib/pacman alpm
+              chroot "./dump" pacman-key --init
+              #chroot "./dump" pacman -Rnsc --noconfirm linux-$ARCH linux-firmware
+              chroot "./dump" /bin/bash -c 'pacman -Syu --noconfirm'
+              chroot "./dump" rm -f /var/cache/pacman/pkg/*
+              sed -i 's/#DisableSandbox/DisableSandbox/' "./dump/etc/pacman.conf"
+              EOF
+              
+              cd $GITHUB_WORKSPACE/dump
+              sudo tar --exclude=dev/* -cpf - * | xz -9 -T0 -c > $GITHUB_WORKSPACE/archlinux-${{ matrix.arch }}.tar.xz
+              sudo rm -r $GITHUB_WORKSPACE/dump
+              
+      - name: Push to release
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: archlinux
+          name: Arch Linux
+          files: |
+            archlinux-*.tar.xz
+          preserve_order: true
+
+  build-arm64:
+    runs-on: ubuntu-24.04-arm
+    strategy:
+      matrix:
+        arch: [aarch64]
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Start Build!
+        run: |
+              ARCH=${{ matrix.arch }}
+              case "$ARCH" in
+              x86_64) ARCH=amd64 ;;
+              amd64) ARCH=amd64 ;;
+              aarch64) ARCH=arm64 ;;
+              arm64) ARCH=arm64 ;;
+              arm) ARCH=arm ;;
+              i386) ARCH=386 ;;
+              *)
+              echo "Unsupported architecture: $ARCH"
+              exit 1
+              ;;
+              esac
+              # Fetch image manifest
+              manifest=$(docker manifest inspect arfshl/archlinuxarm:latest)
+              # Fetch image digest
+              arch="$ARCH"
+              digest=$(echo "$manifest" | jq -r ".manifests[] | select(.platform.architecture == \"$arch\") | .digest")
+              # Pull and Export image
+              docker pull "arfshl/archlinuxarm:latest@${digest}"
+              docker export $(docker create "arfshl/archlinuxarm:latest@${digest}") | xz -T 0 > "$GITHUB_WORKSPACE/archlinux-${{ matrix.arch }}.tar.xz"
+              mkdir dump
+              sudo tar -xJpf archlinux-${{ matrix.arch }}.tar.xz -C dump
+              sudo rm archlinux-${{ matrix.arch }}.tar.xz
+              
+              cat <<- EOF | sudo unshare -mpf bash -e -
+              rm -f "./dump/etc/resolv.conf"
+              echo "nameserver 1.1.1.1" > "./dump/etc/resolv.conf"
+              sed -i 's/^#DisableSandbox/DisableSandbox/' "./dump/etc/pacman.conf"
+              mount --bind /dev "./dump/dev"
+              mount --bind /proc "./dump/proc"
+              mount --bind /sys "./dump/sys"
+              mount --bind ./dump "./dump"
+              #chroot "./dump" useradd -r -s /usr/bin/nologin -d /var/lib/pacman alpm
+              chroot "./dump" pacman-key --init
+              #chroot "./dump" pacman -Rnsc --noconfirm linux-$ARCH linux-firmware
+              #chroot "./dump" /bin/bash -c 'pacman -Syu --noconfirm'
+              chroot "./dump" rm -f /var/cache/pacman/pkg/*
+              sed -i 's/#DisableSandbox/DisableSandbox/' "./dump/etc/pacman.conf"
+              EOF
+              
+              cd $GITHUB_WORKSPACE/dump
+              sudo tar --exclude=dev/* -cpf - * | xz -9 -T0 -c > $GITHUB_WORKSPACE/archlinux-${{ matrix.arch }}.tar.xz
+              sudo rm -r $GITHUB_WORKSPACE/dump
+              
+      - name: Push to release
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: archlinux
+          name: Arch Linux
+          files: |
+            archlinux-*.tar.xz
+          preserve_order: true
+
+
+  build-arm:
+    runs-on: ubuntu-24.04-arm
+    strategy:
+      matrix:
+        arch: [arm]
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Start Build!
+        run: |
+              ARCH=${{ matrix.arch }}
+              case "$ARCH" in
+              x86_64) ARCH=amd64 ;;
+              amd64) ARCH=amd64 ;;
+              aarch64) ARCH=arm64 ;;
+              arm64) ARCH=arm64 ;;
+              arm) ARCH=arm ;;
+              i386) ARCH=386 ;;
+              *)
+              echo "Unsupported architecture: $ARCH"
+              exit 1
+              ;;
+              esac
+              # Fetch image manifest
+              manifest=$(docker manifest inspect arfshl/archlinuxarm:latest)
+              # Fetch image digest
+              arch="$ARCH"
+              digest=$(echo "$manifest" | jq -r ".manifests[] | select(.platform.architecture == \"$arch\") | select(.platform.variant == \"v7\") | .digest")
+              # Pull and Export image
+              docker pull "arfshl/archlinuxarm:latest@${digest}"
+              docker export $(docker create "arfshl/archlinuxarm:latest@${digest}") | xz -T 0 > "$GITHUB_WORKSPACE/archlinux-${{ matrix.arch }}.tar.xz"
+              mkdir dump
+              sudo tar -xJpf archlinux-${{ matrix.arch }}.tar.xz -C dump
+              sudo rm archlinux-${{ matrix.arch }}.tar.xz
+              
+              cat <<- EOF | sudo unshare -mpf bash -e -
+              rm -f "./dump/etc/resolv.conf"
+              echo "nameserver 1.1.1.1" > "./dump/etc/resolv.conf"
+              sed -i 's/^#DisableSandbox/DisableSandbox/' "./dump/etc/pacman.conf"
+              mount --bind /dev "./dump/dev"
+              mount --bind /proc "./dump/proc"
+              mount --bind /sys "./dump/sys"
+              mount --bind ./dump "./dump"
+              #chroot "./dump" useradd -r -s /usr/bin/nologin -d /var/lib/pacman alpm
+              chroot "./dump" pacman-key --init
+              #chroot "./dump" pacman -Rnsc --noconfirm linux-$ARCH linux-firmware
+              #chroot "./dump" /bin/bash -c 'pacman -Syu --noconfirm'
+              chroot "./dump" rm -f /var/cache/pacman/pkg/*
+              sed -i 's/#DisableSandbox/DisableSandbox/' "./dump/etc/pacman.conf"
+              EOF
+              
+              cd $GITHUB_WORKSPACE/dump
+              sudo tar --exclude=dev/* -cpf - * | xz -9 -T0 -c > $GITHUB_WORKSPACE/archlinux-${{ matrix.arch }}.tar.xz
+              sudo rm -r $GITHUB_WORKSPACE/dump
+              
+      - name: Push to release
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: archlinux
+          name: Arch Linux
+          files: |
+            archlinux-*.tar.xz
+          preserve_order: true

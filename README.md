@@ -10,7 +10,11 @@ Supported Desktop Environment:
 
 | Distribution     | Flavor/Desktop Environment | Supported CPU Arch | Docker Registry |
 |------------------|----------------------------|----------------|-----------------|
+| [Arch Linux](https://github.com/arfshl/pd-andronix/tree/main/arch) | CLI XFCE LXQt MATE LXDE | `arm` `aarch64` `x86_64` | `archlinux/archlinux` `arfshl/archlinuxarm:latest` |
 | [Debian Stable](https://github.com/arfshl/termux-proot-script/tree/main/debian) (Recommended for beginners) | CLI XFCE LXQt MATE LXDE | `arm` `aarch64` `x86_64` | `debian:latest` |
+| [Fedora](https://github.com/arfshl/pd-andronix/tree/main/fedora) | CLI XFCE LXQt MATE LXDE | `aarch64` `x86_64` | `fedora:latest` |
+| [OpenSUSE Leap](https://github.com/arfshl/pd-andronix/tree/main/opensuse/) | CLI XFCE LXQt MATE LXDE | `aarch64` `x86_64` | `opensuse/leap` |
+| [OpenSUSE Tumbleweed](https://github.com/arfshl/pd-andronix/tree/main/opensuse-tumbleweed/) | CLI XFCE LXQt MATE LXDE | `aarch64` `x86` `x86_64` | `opensuse/tumbleweed` |
 | [Ubuntu Regular Release](https://github.com/arfshl/termux-proot-script/tree/main/ubuntu) | CLI XFCE LXQt MATE LXDE | `arm` `aarch64` `x86_64` | `ubuntu:rolling` |
 | [Ubuntu LTS](https://github.com/arfshl/termux-proot-script/tree/main/ubuntu-lts) (Recommended for beginners) | CLI XFCE LXQt MATE LXDE | `arm` `aarch64` `x86_64` | `ubuntu:latest` |
 

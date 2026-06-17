@@ -1,0 +1,154 @@
+name: "OpenSUSE Tumbleweed"
+
+on:
+  schedule:
+# Build Every Week
+    - cron: "0 0 * * 0"
+  push:
+    branches: [ 'main' ]
+    paths:
+      - ".github/workflows/opensuse-tumbleweed.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write  
+
+jobs:
+  build-arm64:
+    runs-on: ubuntu-24.04-arm
+    strategy:
+      matrix:
+        arch: [aarch64]
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Start Build!
+        run: |
+              ARCH=${{ matrix.arch }}
+              case "$ARCH" in
+              aarch64)
+              ARCH="arm64"
+              ;;
+              esac
+              # Fetch image manifest
+              opensuse_manifest=$(docker manifest inspect opensuse/tumbleweed:latest)
+              # Fetch image digest
+              arch="$ARCH"
+              digest=$(echo "$opensuse_manifest" | jq -r ".manifests[] | select(.platform.architecture == \"$arch\") | .digest")
+              
+              # Pull and Export image
+              mkdir --parent --mode 755 $GITHUB_WORKSPACE/opensuse-dump/opensuse-tumbleweed
+              TARGET_DIR="$GITHUB_WORKSPACE/opensuse-dump/opensuse-tumbleweed"
+              docker pull "opensuse/tumbleweed@${digest}"
+              docker export --output "$GITHUB_WORKSPACE/opensuse-dump/opensuse-dump-arm64.tar" \
+              $(docker create "opensuse/tumbleweed@${digest}")
+              tar -xpf "$GITHUB_WORKSPACE/opensuse-dump/opensuse-dump-arm64.tar" -C "$TARGET_DIR"
+              
+              # Modification so rootfs can run in proot-distro
+              cat <<- EOF | sudo unshare -mpf bash -e -
+              rm -f "${TARGET_DIR}/etc/resolv.conf"
+              echo "nameserver 1.1.1.1" > "${TARGET_DIR}/etc/resolv.conf"
+              #sed -i -E 's/^(rpm\.install\.excludedocs)/# \1/g' "${TARGET_DIR}/etc/zypp/zypp.conf"
+              mount --bind /dev "${TARGET_DIR}/dev"
+              mount --bind /proc "${TARGET_DIR}/proc"
+              mount --bind /sys "${TARGET_DIR}/sys"
+              #chroot "${TARGET_DIR}" zypper removerepo repo-openh264 || true
+              chroot "${TARGET_DIR}" zypper refresh
+              chroot "${TARGET_DIR}" zypper dup --no-confirm
+              chroot "${TARGET_DIR}" rpm -qa --qf '%{NAME} ' | xargs -n 1 | grep -Pv '(filesystem|gpg-pubkey)' > /tmp/opensuse-pkgs.txt
+              cat /tmp/opensuse-pkgs.txt | xargs chroot "${TARGET_DIR}" zypper install --no-confirm --force
+              chroot "${TARGET_DIR}" zypper install --no-confirm util-linux
+              umount -l "${TARGET_DIR}/dev"
+              umount -l "${TARGET_DIR}/proc"
+              umount -l "${TARGET_DIR}/sys"
+              EOF
+              sudo rm -f /tmp/opensuse-pkgs.txt
+              # Make rootfs archive
+              cd $GITHUB_WORKSPACE/opensuse-dump/opensuse-tumbleweed
+              sudo tar --exclude=dev/* -cpf - * | xz -9 -T0 -c > $GITHUB_WORKSPACE/opensuse-tumbleweed-${{ matrix.arch }}.tar.xz
+  
+      - name: Push to release
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: opensuse-tumbleweed
+          name: OpenSUSE Tumbleweed
+          files: |
+            opensuse-tumbleweed-${{ matrix.arch }}.tar.xz
+          preserve_order: true
+          make_latest: false
+
+  build-amd:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        arch: [ x86_64, x86 ]
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Start Build!
+        run: |
+              ARCH=${{ matrix.arch }}
+              case "$ARCH" in
+              x86_64)
+              ARCH="amd64"
+              ;;
+              x86)
+              ARCH="386"
+              ;;
+              esac
+              # Fetch image manifest
+              opensuse_manifest=$(docker manifest inspect opensuse/tumbleweed:latest)
+              # Fetch image digest
+              arch="$ARCH"
+              digest=$(echo "$opensuse_manifest" | jq -r ".manifests[] | select(.platform.architecture == \"$arch\") | .digest")
+              
+              # Pull and Export image
+              mkdir --parent --mode 755 $GITHUB_WORKSPACE/opensuse-dump/opensuse-tumbleweed
+              TARGET_DIR="$GITHUB_WORKSPACE/opensuse-dump/opensuse-tumbleweed"
+              docker pull "opensuse/tumbleweed@${digest}"
+              docker export --output "$GITHUB_WORKSPACE/opensuse-dump/opensuse-dump-arm64.tar" \
+              $(docker create "opensuse/tumbleweed@${digest}")
+              tar -xpf "$GITHUB_WORKSPACE/opensuse-dump/opensuse-dump-arm64.tar" -C "$TARGET_DIR"
+              
+              # Modification so rootfs can run in proot-distro
+              cat <<- EOF | sudo unshare -mpf bash -e -
+              rm -f "${TARGET_DIR}/etc/resolv.conf"
+              echo "nameserver 1.1.1.1" > "${TARGET_DIR}/etc/resolv.conf"
+              #sed -i -E 's/^(rpm\.install\.excludedocs)/# \1/g' "${TARGET_DIR}/etc/zypp/zypp.conf"
+              mount --bind /dev "${TARGET_DIR}/dev"
+              mount --bind /proc "${TARGET_DIR}/proc"
+              mount --bind /sys "${TARGET_DIR}/sys"
+              #chroot "${TARGET_DIR}" zypper removerepo repo-openh264 || true
+              chroot "${TARGET_DIR}" zypper refresh
+              chroot "${TARGET_DIR}" zypper dup --no-confirm
+              chroot "${TARGET_DIR}" rpm -qa --qf '%{NAME} ' | xargs -n 1 | grep -Pv '(filesystem|gpg-pubkey)' > /tmp/opensuse-pkgs.txt
+              cat /tmp/opensuse-pkgs.txt | xargs chroot "${TARGET_DIR}" zypper install --no-confirm --force
+              chroot "${TARGET_DIR}" zypper install --no-confirm util-linux
+              umount -l "${TARGET_DIR}/dev"
+              umount -l "${TARGET_DIR}/proc"
+              umount -l "${TARGET_DIR}/sys"
+              EOF
+              sudo rm -f /tmp/opensuse-pkgs.txt
+              # Make rootfs archive
+              cd $GITHUB_WORKSPACE/opensuse-dump/opensuse-tumbleweed 
+              sudo tar --exclude=dev/* -cpf - * | xz -9 -T0 -c > $GITHUB_WORKSPACE/opensuse-tumbleweed-${{ matrix.arch }}.tar.xz
+                      
+      - name: Push to release
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: opensuse-tumbleweed
+          name: OpenSUSE Tumbleweed (Rolling Release)
+          files: |
+            opensuse-tumbleweed-${{ matrix.arch }}.tar.xz
+          preserve_order: true
+          make_latest: false
+          
+env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+
+ 

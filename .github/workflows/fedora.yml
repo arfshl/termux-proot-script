@@ -1,0 +1,56 @@
+name: "Fedora"
+
+on:
+  schedule:
+# Build Every Week
+    - cron: "0 0 * * 0"
+  push:
+    branches: [ 'main' ]
+    paths:
+      - ".github/workflows/fedora.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write  
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        arch: [aarch64, x86_64]
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Start Build!
+        run: |
+              ARCH=${{ matrix.arch }}
+              case "$ARCH" in
+              x86_64) ARCH=amd64 ;;
+              amd64) ARCH=amd64 ;;
+              aarch64) ARCH=arm64 ;;
+              arm64) ARCH=arm64 ;;
+              *)
+              echo "Unsupported architecture: $ARCH"
+              exit 1
+              ;;
+              esac
+              # Fetch image manifest
+              manifest=$(docker manifest inspect fedora)
+              # Fetch image digest
+              arch="$ARCH"
+              digest=$(echo "$manifest" | jq -r ".manifests[] | select(.platform.architecture == \"$arch\") | .digest")
+              # Pull and Export image
+              docker pull "fedora@${digest}"
+              docker export $(docker create "fedora@${digest}") | xz -T 0 > "$GITHUB_WORKSPACE/fedora-${{ matrix.arch }}.tar.xz"
+
+      - name: Push to release
+        uses: softprops/action-gh-release@v3
+        with:
+          tag_name: fedora
+          name: Fedora
+          files: |
+            fedora-*.tar.xz
+          preserve_order: true
